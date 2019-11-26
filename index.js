@@ -7,8 +7,8 @@ console.log('Starting... (port:'+port+')');
 http.createServer(function (req, res) {
   console.log('Received event:', JSON.stringify(Object.keys(req), null, 2));
 
-  var respond= (res,jsonResp)=>{
-    console.log('Responding: '+JSON.stringify(jsonResp,null,2));
+  var respond= (fn,res,jsonResp)=>{
+    console.log(fn+' - Responding: '+JSON.stringify(jsonResp,null,2));
     res.writeHead(200, {'Content-Type': 'application/json'});
     res.end(JSON.stringify(jsonResp));
   };
@@ -26,7 +26,7 @@ http.createServer(function (req, res) {
 
         data=JSON.parse(data) // 'Buy the milk'
         if(!data) {
-          respond(res,{
+          respond('ndata',res,{
             data:data,
           });
         } else if(data.url && data.body && data.queryParams && data.headers) {
@@ -46,10 +46,10 @@ http.createServer(function (req, res) {
               } catch(e) {
                 console.log('Try-Catch ERROR: '+e);
               }
-              respond(res,proxyResp);
+              respond('sup',res,proxyResp);
             });
         } else {
-          respond(res,{
+          respond('ncont',res,{
             url:data.url,
             body:data.body,
             queryParams:data.queryParams,
@@ -59,7 +59,7 @@ http.createServer(function (req, res) {
       });
       break;
     default:
-      respond(res,{
+      respond('def',res,{
         err: req.method
       });
   }
