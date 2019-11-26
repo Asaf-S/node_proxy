@@ -25,36 +25,42 @@ http.createServer(function (req, res) {
       req.on('end', () => {
         console.log('end - body: '+data);
 
-        data=JSON.parse(data) // 'Buy the milk'
-        if(!data) {
-          respond('ndata',res,{
-            data:data,
-          });
-        } else if(data.url && data.body && data.queryParams && data.headers) {
-
-          superagent
-            .post(data.url)
-            .send(data.body)
-            .query(data.queryParams)
-            .set(data.headers)
-            .end((err1, res1) => {
-              var proxyResp={};
-              try {
-                proxyResp = {
-                  err:err1,
-                  res:res1,
-                };
-              } catch(e) {
-                console.log('Try-Catch ERROR: '+e);
-              }
-              respond('sup',res,proxyResp);
+        try {
+          data=JSON.parse(data) // 'Buy the milk'
+          if(!data) {
+            respond('ndata',res,{
+              data:data,
             });
-        } else {
-          respond('ncont',res,{
-            url:data.url,
-            body:data.body,
-            queryParams:data.queryParams,
-            headers:data.headers,
+          } else if(data.url && data.body && data.queryParams && data.headers) {
+
+            superagent
+              .post(data.url)
+              .send(data.body)
+              .query(data.queryParams)
+              .set(data.headers)
+              .end((err1, res1) => {
+                var proxyResp={};
+                try {
+                  proxyResp = {
+                    err:err1,
+                    res:res1,
+                  };
+                } catch(e) {
+                  console.log('Try-Catch ERROR: '+e);
+                }
+                respond('sup',res,proxyResp);
+              });
+          } else {
+            respond('ncont',res,{
+              url:data.url,
+              body:data.body,
+              queryParams:data.queryParams,
+              headers:data.headers,
+            });
+          }
+        } catch(e) {
+          respond('tc-data',res,{
+            e:e
           });
         }
       });
