@@ -26,7 +26,7 @@ http.createServer(function (req, res) {
         data.push(chunk);
       })
       req.on('end', () => {
-        console.log(redId+' - end - body: '+data);
+        console.log(redId+' - Body fully received! body: '+data);
 
         try {
           data=JSON.parse(data) // 'Buy the milk'
