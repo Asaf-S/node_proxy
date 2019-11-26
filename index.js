@@ -8,7 +8,7 @@ http.createServer(function (req, res) {
   console.log('Received event:', JSON.stringify(Object.keys(req), null, 2));
 
   switch(req.method) {
-    case 'post':
+    case 'POST':
       let data = []
       req.on('data', chunk => {
         data.push(chunk)
