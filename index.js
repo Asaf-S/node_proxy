@@ -1,5 +1,7 @@
 var http = require('http');
 var port = process.argv[0] || 3000;
+console.log('port:'+port);
+
 http.createServer(function (req, res) {
   console.log('req');
 
