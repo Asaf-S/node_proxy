@@ -9,6 +9,7 @@ http.createServer(function (req, res) {
 
   var respond= (fn,res,jsonResp)=>{
     console.log(fn+' - Responding: '+JSON.stringify(jsonResp,null,2));
+    jsonResp.fn=fn;
     res.writeHead(200, {'Content-Type': 'application/json'});
     res.end(JSON.stringify(jsonResp));
   };
