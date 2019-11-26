@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Asaf-S/node_proxy/issues"
   },
-  "homepage": "https://github.com/Asaf-S/node_proxy#readme"
+  "homepage": "https://github.com/Asaf-S/node_proxy#readme",
+  "dependencies": {
+    "superagent": "^5.1.1"
+  }
 }
