@@ -5,7 +5,7 @@ var port = process.argv[2] || 80;
 console.log('Starting... (port:'+port+')');
 
 http.createServer(function (req, res) {
-  console.log('Received event:', JSON.stringify(req, null, 2));
+  console.log('Received event:', JSON.stringify(Object.keys(req), null, 2));
 
   res.writeHead(200, {'Content-Type': 'application/json'});
   res.end(JSON.stringify({}));
