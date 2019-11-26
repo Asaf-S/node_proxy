@@ -2,12 +2,12 @@ var http = require('http');
 const superagent = require('superagent');
 var port = process.argv[2] || 80;
 // var ip = '35.180.14.57' || "127.0.0.1"
-console.log(new Date().toUTCString() + ' - Starting... (port:'+port+')');
+console.log(new Date().toISOString() + ' - Starting... (port:'+port+')');
 
 http.createServer(function (req, res) {
 
   var randStr = ()=>(Date.now() + Math.random()).toString();
-  var redId = new Date().toUTCString() + ' - ' + randStr();
+  var redId = new Date().toISOString() + ' - ' + randStr();
   console.log(redId+' - Received event:', JSON.stringify(Object.keys(req), null, 2));
 
   var respond= (fn,res,jsonResp)=>{
@@ -75,5 +75,5 @@ http.createServer(function (req, res) {
   }
 
 }).listen(port, ()=>{
-  console.log(new Date().toUTCString() + ' - Server running at port: '+port);
+  console.log(new Date().toISOString() + ' - Server running at port: '+port);
 });
