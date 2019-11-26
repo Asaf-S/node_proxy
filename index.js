@@ -16,6 +16,8 @@ http.createServer(function (req, res) {
         data.push(chunk);
       })
       req.on('end', () => {
+        console.log('end - body: '+data);
+        
         data=JSON.parse(data) // 'Buy the milk'
         if(!data) {
           res.writeHead(200, {'Content-Type': 'application/json'});
