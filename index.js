@@ -2,13 +2,16 @@ var http = require('http');
 const superagent = require('superagent');
 var port = process.argv[2] || 80;
 // var ip = '35.180.14.57' || "127.0.0.1"
-console.log('Starting... (port:'+port+')');
+console.log(new Date().toUTCString() + ' - Starting... (port:'+port+')');
 
 http.createServer(function (req, res) {
-  console.log('Received event:', JSON.stringify(Object.keys(req), null, 2));
+
+  var randStr = ()=>(Date.now() + Math.random()).toString();
+  var redId = new Date().toUTCString() + ' - ' + randStr();
+  console.log(redId+' - Received event:', JSON.stringify(Object.keys(req), null, 2));
 
   var respond= (fn,res,jsonResp)=>{
-    console.log(fn+' - Responding: '+JSON.stringify(jsonResp,null,2));
+    console.log(redId+' - '+fn+' - Responding: '+JSON.stringify(jsonResp,null,2));
     jsonResp.fn=fn;
     res.writeHead(200, {'Content-Type': 'application/json'});
     res.end(JSON.stringify(jsonResp));
@@ -19,11 +22,11 @@ http.createServer(function (req, res) {
     case 'POST':
       let data = []
       req.on('data', chunk => {
-        console.log('chunk of body: '+ (++i));
+        console.log(redId+' - chunk of body: '+ (++i));
         data.push(chunk);
       })
       req.on('end', () => {
-        console.log('end - body: '+data);
+        console.log(redId+' - end - body: '+data);
 
         try {
           data=JSON.parse(data) // 'Buy the milk'
@@ -46,7 +49,7 @@ http.createServer(function (req, res) {
                     res:res1,
                   };
                 } catch(e) {
-                  console.log('Try-Catch ERROR: '+e);
+                  console.log(redId+' - Try-Catch ERROR: '+e);
                 }
                 respond('sup',res,proxyResp);
               });
@@ -72,5 +75,5 @@ http.createServer(function (req, res) {
   }
 
 }).listen(port, ()=>{
-  console.log('Server running at port: '+port);
+  console.log(new Date().toUTCString() + ' - Server running at port: '+port);
 });
