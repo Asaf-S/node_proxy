@@ -7,11 +7,13 @@ console.log('Starting... (port:'+port+')');
 http.createServer(function (req, res) {
   console.log('Received event:', JSON.stringify(Object.keys(req), null, 2));
 
+  var i=0;
   switch(req.method) {
     case 'POST':
       let data = []
       req.on('data', chunk => {
-        data.push(chunk)
+        console.log('chunk of body: '+ (++i));
+        data.push(chunk);
       })
       req.on('end', () => {
         data=JSON.parse(data) // 'Buy the milk'
