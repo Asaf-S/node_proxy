@@ -7,6 +7,12 @@ console.log('Starting... (port:'+port+')');
 http.createServer(function (req, res) {
   console.log('Received event:', JSON.stringify(Object.keys(req), null, 2));
 
+  var respond= (res,jsonResp)=>{
+    console.log('Responding: '+JSON.stringify(jsonResp,null,2));
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.end(JSON.stringify(jsonResp));
+  };
+
   var i=0;
   switch(req.method) {
     case 'POST':
@@ -17,13 +23,12 @@ http.createServer(function (req, res) {
       })
       req.on('end', () => {
         console.log('end - body: '+data);
-        
+
         data=JSON.parse(data) // 'Buy the milk'
         if(!data) {
-          res.writeHead(200, {'Content-Type': 'application/json'});
-          res.end(JSON.stringify({
+          respond(res,{
             data:data,
-          }));
+          });
         } else if(data.url && data.body && data.queryParams && data.headers) {
 
           superagent
@@ -41,25 +46,22 @@ http.createServer(function (req, res) {
               } catch(e) {
                 console.log('Try-Catch ERROR: '+e);
               }
-              res.writeHead(200, {'Content-Type': 'application/json'});
-              res.end(JSON.stringify(proxyResp));
+              respond(res,proxyResp);
             });
         } else {
-          res.writeHead(200, {'Content-Type': 'application/json'});
-          res.end(JSON.stringify({
+          respond(res,{
             url:data.url,
             body:data.body,
             queryParams:data.queryParams,
             headers:data.headers,
-          }));
+          });
         }
       });
       break;
     default:
-      res.writeHead(200, {'Content-Type': 'application/json'});
-      res.end(JSON.stringify({
+      respond(res,{
         err: req.method
-      }));
+      });
   }
 
 }).listen(port, ()=>{
