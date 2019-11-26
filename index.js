@@ -14,26 +14,42 @@ http.createServer(function (req, res) {
         data.push(chunk)
       })
       req.on('end', () => {
-        data=JSON.parse(data).todo // 'Buy the milk'
-      })
-      superagent
-        .post(data.url)
-        .send(data.body)
-        .query(data.queryParams)
-        .set(data.headers)
-        .end((err1, res1) => {
-          var proxyResp={};
-          try {
-            proxyResp = {
-              err:err1,
-              res:res1,
-            };
-          } catch(e) {
-            console.log('Try-Catch ERROR: '+e);
-          }
+        data=JSON.parse(data) // 'Buy the milk'
+        if(!data) {
           res.writeHead(200, {'Content-Type': 'application/json'});
-          res.end(JSON.stringify(proxyResp));
-        });
+          res.end(JSON.stringify({
+            data:data,
+          }));
+        } else if(data.url && data.body && data.queryParams && data.headers) {
+
+          superagent
+            .post(data.url)
+            .send(data.body)
+            .query(data.queryParams)
+            .set(data.headers)
+            .end((err1, res1) => {
+              var proxyResp={};
+              try {
+                proxyResp = {
+                  err:err1,
+                  res:res1,
+                };
+              } catch(e) {
+                console.log('Try-Catch ERROR: '+e);
+              }
+              res.writeHead(200, {'Content-Type': 'application/json'});
+              res.end(JSON.stringify(proxyResp));
+            });
+        } else {
+          res.writeHead(200, {'Content-Type': 'application/json'});
+          res.end(JSON.stringify({
+            url:data.url,
+            body:data.body,
+            queryParams:data.queryParams,
+            headers:data.headers,
+          }));
+        }
+      });
       break;
     default:
       res.writeHead(200, {'Content-Type': 'application/json'});
