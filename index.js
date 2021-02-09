@@ -34,13 +34,18 @@ http.createServer(function (req, res) {
             respond('ndata',res,{
               data:data,
             });
-          } else if(data.url && data.body && data.queryParams && data.headers) {
+          } else if(data.url && data.queryParams && data.headers) {
 
-            superagent
+            let superagentRequest = superagent
               .post(data.url)
-              .send(data.body)
               .query(data.queryParams)
-              .set(data.headers)
+              .set(data.headers);
+            
+            if(data.body) {
+              superagentRequest.send(data.body);
+            }
+            
+            return superagentRequest
               .end((err1, res1) => {
                 var proxyResp={};
                 try {
