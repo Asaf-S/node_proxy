@@ -1,7 +1,7 @@
 var http = require('http');
 const superagent = require('superagent');
 var port = process.argv[2] || 80;
-// var ip = '35.180.14.57' || "127.0.0.1"
+
 console.log(new Date().toISOString() + ' - Starting... (port:'+port+')');
 
 http.createServer(function (req, res) {
