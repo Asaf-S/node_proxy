@@ -1,7 +1,7 @@
 import app from './app';
 import utils from './utils';
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.argv[2] || process.env.PORT || 80;
 
 process.on('unhandledRejection', (reason, promise) => {
   utils.consoleError(`---------
@@ -19,10 +19,10 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 process.on('uncaughtException', err => {
-  utils.consoleError('---------\nUncaught Exception at: ' + err.stack + '\n---------');
+  utils.consoleError(`---------\nUncaught Exception at: ${err.stack}\n---------`);
 });
 
-utils.consoleLog('WEB SERVER - STARTED!');
+utils.consoleLog(`${new Date().toISOString()} - WEB SERVER - STARTED!`);
 
 if (process.env.NODE_ENV !== 'development') {
   const _tmpEnvObj: { [key: string]: string | undefined } = {};
@@ -37,7 +37,7 @@ if (process.env.NODE_ENV !== 'development') {
       _tmpEnvObj[key] = process.env[key];
     }
   });
-  utils.consoleLog('process.env = ' + JSON.stringify(_tmpEnvObj, null, 2) + '\n');
+  utils.consoleLog(`process.env = ${JSON.stringify(_tmpEnvObj, null, 2)}\n`);
 }
 
-app.listen(PORT, () => utils.consoleLog(`Express - Listening on ${PORT}\n`));
+app.listen(PORT, () => utils.consoleLog(`${new Date().toISOString()} - Express - Listening on ${PORT}\n`));

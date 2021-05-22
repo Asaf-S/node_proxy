@@ -48,7 +48,7 @@ export default express()
   })
 
   // API routes
-  .get('/helloworld', ProxyAPI)
+  .all('/', ProxyAPI)
 
   // Static resources
   .get('/favicon.ico', (req, res) => res.send(''))

@@ -2,8 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 // import * as firebase from 'firebase-admin';
 
 export interface ICustomNextFunction extends NextFunction { }
-export interface ICustomRequest extends Request {
+export interface ICustomRequest<T = any> extends Request {
   // user?: firebase.auth.DecodedIdToken,
+  body: T,
   isBodyTooLong?: boolean,
   id?: string,
 }
