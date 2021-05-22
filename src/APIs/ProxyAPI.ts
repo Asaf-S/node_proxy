@@ -24,6 +24,7 @@ interface IResponseType {
   method: METHOD_TYPES;
   startTimestamp: string,
   endTimestamp: string,
+  req: express.Request,
 }
 
 type Send<T = Response> = (body?: IResponseType) => T;
@@ -67,6 +68,7 @@ async function ProxyAPI(incomingReq: ICustomRequest<IRequestType>, outgoingRes: 
         method: incomingReq.method as METHOD_TYPES,
         startTimestamp,
         endTimestamp: new Date().toISOString(),
+        req: incomingReq,
       });
 
     }).catch((err1: superagent.ResponseError) => {
@@ -79,6 +81,7 @@ async function ProxyAPI(incomingReq: ICustomRequest<IRequestType>, outgoingRes: 
         method: incomingReq.method as METHOD_TYPES,
         startTimestamp,
         endTimestamp: new Date().toISOString(),
+        req: incomingReq,
       });
     });
 
@@ -92,6 +95,7 @@ async function ProxyAPI(incomingReq: ICustomRequest<IRequestType>, outgoingRes: 
       method: incomingReq.method as METHOD_TYPES,
       startTimestamp,
       endTimestamp: new Date().toISOString(),
+      req: incomingReq,
     });
   }
 }
