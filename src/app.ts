@@ -34,8 +34,8 @@ export default express()
       },
     })
   )
-  .use((req, res, next) => {
-    utils.consoleLog(new Date().toISOString() + ' - New request: ' + utils.convertRequestToString(req));
+  .use((req: ICustomRequest, res, next) => {
+    utils.consoleLog(`${new Date().toISOString()} - ${req.id} - New request: ${utils.convertRequestToString(req)}`);
     return next();
   })
   .get('/ka', (req, res) => {

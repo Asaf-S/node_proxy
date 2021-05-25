@@ -24,7 +24,7 @@ interface IResponseType {
   method: METHOD_TYPES;
   startTimestamp: string,
   endTimestamp: string,
-  req: express.Request,
+  // req?: express.Request,
 }
 
 type Send<T = Response> = (body?: IResponseType) => T;
@@ -59,7 +59,7 @@ async function ProxyAPI(incomingReq: ICustomRequest<IRequestType>, outgoingRes: 
     }
 
     return superagentRequest.then((incomingResponse: superagent.Response) => {
-      return outgoingRes.json({
+      const output = {
         body: incomingResponse.body || {},
         text: incomingResponse.text || '',
         headers: incomingResponse.headers || {},
@@ -68,11 +68,13 @@ async function ProxyAPI(incomingReq: ICustomRequest<IRequestType>, outgoingRes: 
         method: incomingReq.method as METHOD_TYPES,
         startTimestamp,
         endTimestamp: new Date().toISOString(),
-        req: incomingReq,
-      });
+        // req: incomingReq,
+      };
+      console.log(`${incomingReq.id} - output: ${utils.convertToString(output)}`); // tslint:disable-line // eslint-disable-line no-console
+      return outgoingRes.json(output);
 
     }).catch((err1: superagent.ResponseError) => {
-      return outgoingRes.json({
+      const output = {
         body: (err1.response?.body) || {},
         text: err1.response?.text || '',
         headers: (err1.response?.headers) || {},
@@ -81,12 +83,14 @@ async function ProxyAPI(incomingReq: ICustomRequest<IRequestType>, outgoingRes: 
         method: incomingReq.method as METHOD_TYPES,
         startTimestamp,
         endTimestamp: new Date().toISOString(),
-        req: incomingReq,
-      });
+        // req: incomingReq,
+      };
+      console.error(`${incomingReq.id} - output error (1): ${utils.convertToString(output)}`); // tslint:disable-line // eslint-disable-line no-console
+      return outgoingRes.json(output);
     });
 
   } catch (err2) {
-    return outgoingRes.json({
+    const output = {
       body: {},
       text: err2.stack,
       headers: {},
@@ -95,8 +99,10 @@ async function ProxyAPI(incomingReq: ICustomRequest<IRequestType>, outgoingRes: 
       method: incomingReq.method as METHOD_TYPES,
       startTimestamp,
       endTimestamp: new Date().toISOString(),
-      req: incomingReq,
-    });
+      // req: incomingReq,
+    };
+    console.error(`${incomingReq.id} - output error (2): ${utils.convertToString(output)}`); // tslint:disable-line // eslint-disable-line no-console
+    return outgoingRes.json(output);
   }
 }
 
