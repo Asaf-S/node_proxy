@@ -1,7 +1,7 @@
 import request from 'supertest';
 import app from '../app';
 
-test('Hello World', async () => {
+test('ProxyAPI_happy_flow', async () => {
   const body = {
     url: 'https://httpbin.org/post',
     body: {a: 1, b: 'Textual content'},
