@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "name": "AS_Proxy",
+      "script": "npm",
+      "args" : "start"
+    }
+  ]
+}
