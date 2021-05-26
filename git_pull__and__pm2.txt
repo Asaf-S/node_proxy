@@ -1,0 +1,30 @@
+git pull && npm i && npm run build && npm test && sudo pm2 restart 0
+
+
+
+
+
+First time:
+
+(1) Make sure node doesn't throw an error when using port under 1024 (like 80 or 443)
+sudo apt-get install libcap2-bin
+sudo setcap cap_net_bind_service=+ep `readlink -f \`which node\``
+
+(2) Add to pm2
+// sudo pm2 start npm --name "AS_Proxy" -- start
+
+cd /home/ubuntu/node_proxy/
+sudo pm2 start pm2_config.json --watch
+sudo pm2 startup
+`sudo pm2 startup` and then copy-paste-run the command line
+sudo pm2 save
+
+(3) Restart the server, and make sure the app reloads automatically, and that the public IP doesn't change
+sudo reboot now
+sudo pm2 list
+[Make a postman request]
+
+(4) Troubleshooting:
+`[PM2][ERROR] Process failed to launch EACCES: permission denied, open '/home/ubuntu/.pm2/logs/AS-Proxy-error.log'`
+=>
+`sudo chmod a+rwx  /home/ubuntu/.pm2/logs/AS-Proxy-error.log`
