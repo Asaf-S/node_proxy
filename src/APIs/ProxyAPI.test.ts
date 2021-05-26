@@ -12,9 +12,7 @@ test('Hello World', async () => {
     },
   };
   const res = await request(app).post('/').send(body);
-  const response = {
-    hello: 'world',
-  };
+
   // console.log(`res=${JSON.stringify(res, null, 2)}`);
   expect(res.status).toBe(200);
   const keysOfResBody = Object.keys(res.body);
