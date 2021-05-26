@@ -1,7 +1,7 @@
 import request from 'supertest';
 import app from '../app';
 
-test('Hello World', async () => {
+test('ProxyAPI_happy_flow', async () => {
   const body = {
     url: 'https://httpbin.org/post',
     body: {a: 1, b: 'Textual content'},
@@ -12,9 +12,7 @@ test('Hello World', async () => {
     },
   };
   const res = await request(app).post('/').send(body);
-  const response = {
-    hello: 'world',
-  };
+
   // console.log(`res=${JSON.stringify(res, null, 2)}`);
   expect(res.status).toBe(200);
   const keysOfResBody = Object.keys(res.body);
