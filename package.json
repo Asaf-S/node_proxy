@@ -7,7 +7,7 @@
   },
   "main": "dist/index.js",
   "scripts": {
-    "test": "rimraf ./dist && jest --forceExit",
+    "test": "rimraf ./dist && npm run build && jest --forceExit",
     "test_function": "jest --detectOpenHandles --forceExit",
     "prebuild_debug": "tslint -c tslint.json -p tsconfig.json --fix",
     "build_debug": "tsc -sourcemap",
