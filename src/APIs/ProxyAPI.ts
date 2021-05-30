@@ -11,14 +11,14 @@ enum METHOD_TYPES {
 
 interface IRequestType {
   url: string,
-	body: object,
+	body: object | string,
 	queryParams: object,
 	headers: object,
 }
 interface IResponseType {
   status: number;
   statusCode: number;
-  body: object;
+  body: object | string;
   text: string;
   headers: Record<string, string>;
   method: METHOD_TYPES;
@@ -38,6 +38,8 @@ async function ProxyAPI(incomingReq: ICustomRequest<IRequestType>, outgoingRes: 
   const startTimestamp = (new Date()).toISOString();
 
   const incomingData: IRequestType = incomingReq.body;
+  incomingData.queryParams = incomingData.queryParams || {};
+  incomingData.headers = incomingData.queryParams || {};
 
   try {
     let superagentRequest: superagent.SuperAgentRequest;
