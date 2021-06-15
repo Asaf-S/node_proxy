@@ -39,7 +39,19 @@ async function ProxyAPI(incomingReq: ICustomRequest<IRequestType>, outgoingRes: 
 
   const incomingData: IRequestType = incomingReq.body;
   incomingData.queryParams = incomingData.queryParams || {};
-  incomingData.headers = incomingData.queryParams || {};
+  incomingData.headers = incomingData.headers || {};
+  if (typeof (incomingData.url) !== 'string' || !incomingData.url.match(/^http/i)) {
+    return outgoingRes.json({
+      status: 0,
+      statusCode: 0,
+      body: {},
+      text: `The following expression is false (incomingData.url=${incomingData.url}): typeof (incomingData.url) !== 'string' || !incomingData.url.match(/^http/i)`,
+      headers: {},
+      method: incomingReq.method as METHOD_TYPES,
+      startTimestamp,
+      endTimestamp: new Date().toISOString(),
+    });
+  }
 
   try {
     let superagentRequest: superagent.SuperAgentRequest;
