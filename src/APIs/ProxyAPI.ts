@@ -37,23 +37,27 @@ async function ProxyAPI(incomingReq: ICustomRequest<IRequestType>, outgoingRes: 
 
   const startTimestamp = (new Date()).toISOString();
 
-  const incomingData: IRequestType = incomingReq.body;
-  incomingData.queryParams = incomingData.queryParams || {};
-  incomingData.headers = incomingData.headers || {};
-  if (typeof (incomingData.url) !== 'string' || !incomingData.url.match(/^http/i)) {
-    return outgoingRes.json({
-      status: 0,
-      statusCode: 0,
-      body: {},
-      text: `The following expression is false (incomingData.url=${incomingData.url}): typeof (incomingData.url) !== 'string' || !incomingData.url.match(/^http/i)`,
-      headers: {},
-      method: incomingReq.method as METHOD_TYPES,
-      startTimestamp,
-      endTimestamp: new Date().toISOString(),
-    });
-  }
-
   try {
+    // Prepare data
+    if (typeof (incomingReq) === 'string') {
+      incomingReq = JSON.parse(incomingReq as string);
+    }
+    const incomingData: IRequestType = incomingReq.body;
+    incomingData.queryParams = incomingData.queryParams || {};
+    incomingData.headers = incomingData.headers || {};
+    if (typeof (incomingData.url) !== 'string' || !incomingData.url.match(/^http/i)) {
+      return outgoingRes.json({
+        status: 0,
+        statusCode: 0,
+        body: {},
+        text: `The following expression is false (incomingData.url=${incomingData.url}): typeof (incomingData.url) !== 'string' || !incomingData.url.match(/^http/i)`,
+        headers: {},
+        method: incomingReq.method as METHOD_TYPES,
+        startTimestamp,
+        endTimestamp: new Date().toISOString(),
+      });
+    }
+
     let superagentRequest: superagent.SuperAgentRequest;
     switch (incomingReq.method) {
       case METHOD_TYPES.POST:
