@@ -39,10 +39,11 @@ async function ProxyAPI(incomingReq: ICustomRequest<IRequestType>, outgoingRes: 
 
   try {
     // Prepare data
-    if (typeof (incomingReq) === 'string') {
-      incomingReq = JSON.parse(incomingReq as string);
+    let incomingData: IRequestType = incomingReq.body;
+    if (typeof (incomingData) === 'string') {
+      utils.consoleLog(`Trying to convert 'incomingData' from string to JSON: ${utils.convertToString(incomingData)}`);
+      incomingData = JSON.parse(incomingData as string);
     }
-    const incomingData: IRequestType = incomingReq.body;
     incomingData.queryParams = incomingData.queryParams || {};
     incomingData.headers = incomingData.headers || {};
     if (typeof (incomingData.url) !== 'string' || !incomingData.url.match(/^http/i)) {
