@@ -13,8 +13,10 @@ interface IRequestType {
   url: string,
 	body: object | string,
 	queryParams: object,
-	headers: object,
+  headers: object,
+  method?: METHOD_TYPES,
 }
+
 interface IResponseType {
   status: number;
   statusCode: number;
@@ -39,42 +41,33 @@ async function ProxyAPI(incomingReq: ICustomRequest<IRequestType>, outgoingRes: 
 
   try {
     // Prepare data
-    let incomingData: IRequestType = incomingReq.body;
-    if (typeof (incomingData) === 'string') {
-      utils.consoleLog(`Trying to convert 'incomingData' from string to JSON: ${utils.convertToString(incomingData)}`);
-      incomingData = JSON.parse(incomingData as string);
+    let parsedIncomingData: IRequestType = incomingReq.body;
+    if (typeof (parsedIncomingData) === 'string') {
+      utils.consoleLog(`Trying to convert 'parsedIncomingData' from string to JSON: ${utils.convertToString(parsedIncomingData)}`);
+      parsedIncomingData = JSON.parse(parsedIncomingData as string);
     }
-    incomingData.queryParams = incomingData.queryParams || {};
-    incomingData.headers = incomingData.headers || {};
-    if (typeof (incomingData.url) !== 'string' || !incomingData.url.match(/^http/i)) {
+    parsedIncomingData.queryParams = parsedIncomingData.queryParams || {};
+    parsedIncomingData.headers = parsedIncomingData.headers || {};
+    parsedIncomingData.method = incomingReq.body.method as METHOD_TYPES || incomingReq.method;
+    if (typeof (parsedIncomingData.url) !== 'string' || !parsedIncomingData.url.match(/^http/i)) {
       return outgoingRes.json({
         status: 0,
         statusCode: 0,
         body: {},
-        text: `The following expression is false (incomingData.url=${incomingData.url}): typeof (incomingData.url) !== 'string' || !incomingData.url.match(/^http/i)`,
+        text: `The following expression is false (parsedIncomingData.url=${parsedIncomingData.url}): typeof (parsedIncomingData.url) !== 'string' || !parsedIncomingData.url.match(/^http/i)`,
         headers: {},
-        method: incomingReq.method as METHOD_TYPES,
+        method: parsedIncomingData.method as METHOD_TYPES,
         startTimestamp,
         endTimestamp: new Date().toISOString(),
       });
     }
 
-    let superagentRequest: superagent.SuperAgentRequest;
-    switch (incomingReq.method) {
-      case METHOD_TYPES.POST:
-        superagentRequest = superagent.post(incomingData.url);
-        break;
+    let superagentRequest: superagent.SuperAgentRequest = superagent(parsedIncomingData.method, parsedIncomingData.url)
+      .query(parsedIncomingData.queryParams)
+      .set(parsedIncomingData.headers);
 
-      case METHOD_TYPES.GET:
-      default:
-        superagentRequest = superagent.get(incomingData.url);
-        break;
-    }
-
-    superagentRequest = superagentRequest.query(incomingData.queryParams).set(incomingData.headers);
-
-    if (incomingData.body && incomingReq.method !== METHOD_TYPES.GET) {
-      superagentRequest = superagentRequest.send(incomingData.body);
+    if (parsedIncomingData.body) {
+      superagentRequest = superagentRequest.send(parsedIncomingData.body);
     }
 
     return superagentRequest.then((incomingResponse: superagent.Response) => {
@@ -84,7 +77,7 @@ async function ProxyAPI(incomingReq: ICustomRequest<IRequestType>, outgoingRes: 
         headers: incomingResponse.headers || {},
         status: incomingResponse.status,
         statusCode: incomingResponse.status,
-        method: incomingReq.method as METHOD_TYPES,
+        method: parsedIncomingData.method as METHOD_TYPES,
         startTimestamp,
         endTimestamp: new Date().toISOString(),
         // req: incomingReq,
@@ -99,7 +92,7 @@ async function ProxyAPI(incomingReq: ICustomRequest<IRequestType>, outgoingRes: 
         headers: (err1.response?.headers) || {},
         status: err1.status || 0,
         statusCode: err1.status || 0,
-        method: incomingReq.method as METHOD_TYPES,
+        method: parsedIncomingData.method as METHOD_TYPES,
         startTimestamp,
         endTimestamp: new Date().toISOString(),
         // req: incomingReq,
@@ -109,13 +102,20 @@ async function ProxyAPI(incomingReq: ICustomRequest<IRequestType>, outgoingRes: 
     });
 
   } catch (err2) {
+    let _method = '';
+    try {
+      _method = incomingReq.body.method as METHOD_TYPES;
+    } catch (err0) {
+      // Do nothing...
+    }
+    const _parsedMethod: METHOD_TYPES = (_method ? _method : incomingReq.method) as METHOD_TYPES;
     const output = {
       body: {},
       text: err2.stack,
       headers: {},
       status: 0,
       statusCode: 0,
-      method: incomingReq.method as METHOD_TYPES,
+      method: _parsedMethod,
       startTimestamp,
       endTimestamp: new Date().toISOString(),
       // req: incomingReq,
