@@ -25,6 +25,27 @@
         "${workspaceFolder}/dist/**/*.js"
       ]
     },
+    {
+      "name": "Test",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run", "test"
+      ],
+      "outputCapture": "std",
+      "envFile": "${workspaceFolder}/.env",
+      "port": 9229,
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      // "program": "${workspaceFolder}/dist/index.js",
+      // "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ]
+    },
 
     // {
     //   "name": "Worker - Launch via NPM",
